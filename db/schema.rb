@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_27_204935) do
+ActiveRecord::Schema.define(version: 2019_11_29_174201) do
 
   create_table "leaderships", force: :cascade do |t|
     t.integer "leader_id"
@@ -32,8 +32,7 @@ ActiveRecord::Schema.define(version: 2019_11_27_204935) do
     t.string "dob"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "state_id"
-    t.index ["state_id"], name: "index_members_on_state_id"
+    t.string "state"
   end
 
   create_table "ministries", force: :cascade do |t|
