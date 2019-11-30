@@ -46,7 +46,8 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "zipcode validation should reject invalid entries" do
-    invalid_zipcodes = %w[240189 213 15ds6 00000]
+    @person.state = "VA"
+    invalid_zipcodes = %w[240189 213 15ds6 00000 60660]
     invalid_zipcodes.each do |invalid_zipcode|
       @person.zipcode = invalid_zipcode
       assert_not @person.valid?, "#{invalid_zipcode} should be invalid"
@@ -54,6 +55,7 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "zipcode validation should accept valid entries" do
+    @person.state = "VA"
     @person.zipcode = "24018"
     assert @person.valid?
   end
@@ -75,7 +77,7 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "dob validation rejects invalid entries" do
-    invalid_dob = %w[1-2-2000 01022000 01-02-99]
+    invalid_dob = %w[1-2-2000 01022000 01-02-99 30-11-2000 11-32-2000 11-30-3000 11-30-1850]
     invalid_dob.each do |dob|
       @person.dob = dob
       assert_not @person.valid?, "#{dob} should be invalid"
