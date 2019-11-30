@@ -8,7 +8,8 @@ one:
   city: 
   zipcode: 
   phone: 
-  dob: 
+  dob:
+  state: 
 
 two:
   first_name: 
@@ -18,4 +19,5 @@ two:
   city: 
   zipcode: 
   phone: 
-  dob: 
+  dob:
+  state: 
