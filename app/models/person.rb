@@ -9,6 +9,9 @@ class Person < ApplicationRecord
   validates_with StateValidator, unless: Proc.new { |person| person.state.nil? }
   validates_with ZipValidator, unless: Proc.new { |person| person.zipcode.nil? }, :field => :state
   validates_with DobValidator, unless: Proc.new { |person| person.dob.nil? }
+
+  # has_many :children, class_name: "Person", foreign_key: :parent_id
+  # has_one :spouse, class_name: "Person", foreign_key: :spouse
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry
 end

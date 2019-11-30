@@ -4,8 +4,16 @@ class PersonTest < ActiveSupport::TestCase
   setup do
     Rails.application.load_seed
     @person = Person.new(first_name: "Example", last_name: "Person")
+    @child = Person.new(first_name: "Junior", last_name: "Person")
   end
 
+  test "can be a member" do
+  end
+
+  test "can be a non-member" do
+  end
+
+  #Validations
   test "should be valid" do
     assert @person.valid?
   end
@@ -92,6 +100,30 @@ class PersonTest < ActiveSupport::TestCase
     end
   end
 
+  #Associations with Self(Children)
+  test "can have children" do
+    @person.children << @child
+    assert @person.children.first == @child
+  end
+
+  test "can have no children" do
+    assert @person.children.blank?
+  end
+
+  test "cannot have self as child" do
+  end
+
+  #Associations with Self(Spouse)
+  test "can have spouse" do
+  end
+
+  test "can have no spouse" do
+  end
+
+
+  
+
+  #Associations with Ministry
   # test "people can lead a ministry" do
   #   worship = Ministry.create(name: "Worship")
   #   worship.leader = Person.find_by(first_name: "c")
