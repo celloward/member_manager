@@ -5,6 +5,7 @@ class PersonTest < ActiveSupport::TestCase
     Rails.application.load_seed
     @person = Person.new(first_name: "Example", last_name: "Person")
     @child = Person.new(first_name: "Junior", last_name: "Person")
+    @spouse = Person.new(first_name: "Spouse", last_name: "Person")
   end
 
   test "can be a member" do
@@ -102,6 +103,8 @@ class PersonTest < ActiveSupport::TestCase
 
   #Associations with Self(Children)
   test "can have children" do
+    @person.save
+    @child.save
     @person.children << @child
     assert @person.children.first == @child
   end
@@ -111,18 +114,46 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "cannot have self as child" do
+    @person.save
+    @person.children << @person
+    assert_not @person.valid?
   end
 
   #Associations with Self(Spouse)
   test "can have spouse" do
+    @person.save
+    @spouse.save
+    @person.spouse = @spouse
+    assert @person.spouse == @spouse
   end
 
   test "can have no spouse" do
+    assert @person.spouse.blank?
   end
 
+  test "cannot have more than one living spouse" do
+    @person.save
+    @spouse.save
+    @secondspouse = Person.new(first_name: "Second", last_name: "Person")
+    @secondspouse.save
+    @person.spouses << @spouse
+    @person.spouses << @secondspouse
+    assert_not @person.valid?
+    @person.spouses.pop
+    @spouse.living = false
+    @person.spouses << @secondspouse
+    assert @person.valid?
+  end
 
+  test "cannot have self as spouse" do
+    assert_raise { @person.spouse << @person }
+  end
+
+  test "cannot have child as spouse" do
+    @person.children << @child
+    assert_raise { @person.spouse << @person.child }
+  end
   
-
   #Associations with Ministry
   # test "people can lead a ministry" do
   #   worship = Ministry.create(name: "Worship")
