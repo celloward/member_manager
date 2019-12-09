@@ -10,15 +10,17 @@ class Person < ApplicationRecord
   validates_with StateValidator, unless: Proc.new { |person| person.state.nil? }
   validates_with ZipValidator, unless: Proc.new { |person| person.zipcode.nil? }, :field => :state
   validates_with DobValidator, unless: Proc.new { |person| person.dob.nil? }
-  # validates_with ChildValidator, unless: Proc.new { |person| person.children.nil? }
+  validates_with ChildValidator, unless: Proc.new { |person| person.children.nil? }
   validates_with SpouseValidator, unless: Proc.new { |person| person.spouse.nil? }
 
   #Associations
-  has_many :children, class_name: "Person", foreign_key: :parent_id #, before_add :validate_child
+  has_many :children, class_name: "Person", foreign_key: :parent_id
   belongs_to :parent, class_name: "Person", optional: true
   
-  has_many :spouses, class_name: "Person", foreign_key: :spouse_id
+  has_one :spouse, class_name: "Person", foreign_key: :spouse_id
   belongs_to :spouse, class_name: "Person", optional: true
+  has_many :former_spouses, class_name: "Person", foreign_key: :former_spouse_id
+  belongs_to :former_spouse, class_name: "Person", optional: true
   
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry

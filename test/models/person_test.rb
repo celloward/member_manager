@@ -136,10 +136,8 @@ class PersonTest < ActiveSupport::TestCase
     @spouse.save
     @secondspouse = Person.new(first_name: "Second", last_name: "Person")
     @secondspouse.save
-    @person.spouses << @spouse
-    @person.spouses << @secondspouse
-    assert_not @person.valid?
-    @person.spouses.pop
+    @person.spouse = @spouse
+    assert_raise { @person.spouses = @secondspouse }
     @spouse.living = false
     @person.spouses << @secondspouse
     assert @person.valid?
