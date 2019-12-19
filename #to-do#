@@ -1,0 +1,9 @@
+* has_many relationship with spouse (to access #spouses)
+* #married which can be called on #spouses to find out if the marriage is current
+* Marriage table
+  * "Married" boolean column in Marriage table
+  * "husband_id" and "wife_id" in Marriage table
+  * Unique enforcement
+* #marry which finds all instances of husband and wife and checks #married, then creates new marriage record and saves both.
+* #divorce makes "Married" column false in both parties
+* #die makes "Married" column false in both parties and "Living" column in Person table false for only that Person.
