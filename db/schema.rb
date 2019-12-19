@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_01_125704) do
+ActiveRecord::Schema.define(version: 2019_12_19_180705) do
 
   create_table "leaderships", force: :cascade do |t|
     t.integer "leader_id"
@@ -19,6 +19,17 @@ ActiveRecord::Schema.define(version: 2019_12_01_125704) do
     t.datetime "updated_at", null: false
     t.index ["leader_id"], name: "index_leaderships_on_leader_id"
     t.index ["ministry_id"], name: "index_leaderships_on_ministry_id"
+  end
+
+  create_table "marriages", force: :cascade do |t|
+    t.integer "husband_id"
+    t.integer "wife_id"
+    t.string "marriage_date"
+    t.string "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["husband_id"], name: "index_marriages_on_husband_id"
+    t.index ["wife_id"], name: "index_marriages_on_wife_id"
   end
 
   create_table "ministries", force: :cascade do |t|
@@ -40,13 +51,9 @@ ActiveRecord::Schema.define(version: 2019_12_01_125704) do
     t.datetime "updated_at", null: false
     t.string "state"
     t.integer "parent_id"
-    t.integer "spouse_id"
-    t.boolean "living", default: true, null: false
     t.boolean "member", default: false, null: false
-    t.integer "former_spouse_id"
-    t.index ["former_spouse_id"], name: "index_people_on_former_spouse_id"
+    t.string "date_of_death"
     t.index ["parent_id"], name: "index_people_on_parent_id"
-    t.index ["spouse_id"], name: "index_people_on_spouse_id"
   end
 
   create_table "states", force: :cascade do |t|
