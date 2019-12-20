@@ -3,9 +3,9 @@ require 'test_helper'
 class PersonTest < ActiveSupport::TestCase
   setup do
     Rails.application.load_seed
-    @person = Person.new(first_name: "Example", last_name: "Person")
-    @child = Person.new(first_name: "Junior", last_name: "Person")
-    @spouse = Person.new(first_name: "Spouse", last_name: "Person")
+    @person = Person.new(first_name: "Example", last_name: "Person", gender: "male")
+    @child = Person.new(first_name: "Junior", last_name: "Person", gender: "female")
+    @spouse = Person.new(first_name: "Spouse", last_name: "Person", gender: "female")
   end
 
   test "can be a member" do
@@ -16,6 +16,15 @@ class PersonTest < ActiveSupport::TestCase
 
   #Validations
   test "should be valid" do
+    assert @person.valid?
+  end
+
+  test "should have be male or female" do
+    @person.gender = nil
+    assert_not @person.valid?
+    @person.gender = "woman"
+    assert_not @person.valid?
+    @person.gender = "male"
     assert @person.valid?
   end
 

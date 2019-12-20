@@ -1,0 +1,15 @@
+* has_many, through: :marriage relationship with spouse (to access #spouses)
+* #married? which can be called on #spouses to find out if the marriage is current
+* Marriage table
+  * "husband_id" and "wife_id"
+  * "start_date" and "end_date" 
+* Unique enforcement of each marriage record
+* #marry which finds all instances of husband and wife and checks for end dates, then creates new marriage record and saves both.
+* #divorce makes entry for end_date column in both parties
+* #die sets date_of_death and sets Marriage.end_date the date of death.
+* "date_of_death" column in Person
+
+Person table
+* "living" becomes "date_of_death", default: null, null: true
+* remove "spouse_id" reference
+* remove "former_spouse_id" reference
