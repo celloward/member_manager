@@ -3,7 +3,7 @@ class Person < ApplicationRecord
   
   #Validations
   validates :first_name, :last_name, presence: true, length: { maximum: 30 }
-  validates :gender, presence: true, format: { with: /^male|female$/ }
+  validates :gender, presence: true, format: { with: /\Amale|female\z/ }
   VALID_EMAIL_REGEX = /[\w+\-.](?<!\.)+@[a-z\d\-.]+(?<!\.)\.[a-z]+/i
   validates :email, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }, unless: Proc.new { |person| person.email.nil? }
   VALID_PHONE_REGEX = /\A\(?\d{3}[\)\-\.\\]?\d{3}[\-\.\\]?\d{4}\z/
