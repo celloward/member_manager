@@ -19,8 +19,8 @@ class Person < ApplicationRecord
   belongs_to :parent, class_name: "Person", optional: true
   
   has_many :marriages
-  has_many :husbands, through: :marriages
-  has_many :wives, through: :marriages
+  # has_many :husbands, through: :marriages, source: :husband_id
+  has_many :wives, through: :marriages, source: :wife
 
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry
