@@ -26,4 +26,32 @@ class Person < ApplicationRecord
 
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry
+
+  def married?
+    !current_spouse.nil?
+  end
+
+  def current_spouse
+    current_marriage = Marriage.find_by_sql("SELECT * FROM marriages AS m JOIN people AS p ON m.husband_id = p.id WHERE m.end_date IS NULL AND m.husband_id = #{self.id} OR m.wife_id = #{self.id}")[0]
+    if current_marriage.blank?
+      nil
+    elsif self.id == current_marriage.husband_id
+      Person.find_by(id: current_marriage.wife_id)
+    elsif self.id == current_marriage.wife_id
+      Person.find_by(id: current_marriage.husband_id)
+    end
+  end
+
+  def marry spouse
+  end
+
+  def divorce spouse
+  end
+
+  def die date_of_death
+    self.date_of_death = date_of_death
+    if self.gender = "male"
+      Marriage.find_by(husband_id: self.id)
+    end
+  end
 end
