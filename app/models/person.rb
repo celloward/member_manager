@@ -18,9 +18,11 @@ class Person < ApplicationRecord
   has_many :children, class_name: "Person", foreign_key: :parent_id
   belongs_to :parent, class_name: "Person", optional: true
   
-  has_many :marriages
-  # has_many :husbands, through: :marriages, source: :husband_id
-  has_many :wives, through: :marriages, source: :wife
+  has_many :husband_marriages, foreign_key: :husband_id, class_name: "Marriage"
+  has_many :wives, through: :husband_marriages
+
+  has_many :wife_marriages, foreign_key: :wife_id, class_name: "Marriage"
+  has_many :husbands, through: :wife_marriages
 
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry
