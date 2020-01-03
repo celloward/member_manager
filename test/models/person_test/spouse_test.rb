@@ -5,8 +5,7 @@ class PersonTest < ActiveSupport::TestCase
   setup do
     @person.save
     @spouse.save
-    @secondspouse = Person.new(first_name: "Second", last_name: "Person", gender: "female")
-    @secondspouse.save
+    @secondspouse = Person.create(first_name: "Second", last_name: "Person", gender: "female")
   end
 
   test "#current_spouse finds opposite spouse with no end date" do
@@ -106,12 +105,12 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "can have former spouse through #die" do
-    @person.marry(@secondspouse)
+    Marriage.create(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2020-01-01")
     @secondspouse.die("2020-13-12")
     assert_not @person.married?
-    assert_not @seconspouse.married?
-    assert_equal @person.wives, @secondspouse
-    assert_equal @secondspouse.husbands, @person
+    assert_not @secondspouse.married?
+    assert @person.wives.all?(Person.find(@secondspouse.id))
+    assert @secondspouse.husbands.all?(Person.find(@person.id))
   end
 
   test "can create former spouses through #divorce" do
@@ -121,7 +120,7 @@ class PersonTest < ActiveSupport::TestCase
     @person.divorce(@spouse)
     assert_not @person.married?
     assert_not @spouse.married?
-    assert_equal @person.wives, @spouse
-    assert_equal @spouse.husbands, @person
+    assert @person.wives.all?(Person.find(@spouse.id))
+    assert @spouse.husbands.all?(Person.find(@person.id))
   end
 end
