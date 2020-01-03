@@ -32,25 +32,33 @@ class Person < ApplicationRecord
   end
 
   def current_marriage
-    Marriage.where(husband_id: self.id).or(Marriage.where(wife_id: self.id)).where(end_date: nil)
+    Marriage.where(husband_id: self.id).or(Marriage.where(wife_id: self.id)).where(end_date: nil).first
   end
 
   def current_spouse
-    if !self.current_marriage.blank?
-      current_marriage.first.husband_id == self.id ? Person.find(current_marriage.first.wife_id) : Person.find(current_marriage.first.husband_id)
+    if !self.current_marriage.nil?
+      current_marriage.husband_id == self.id ? Person.find(current_marriage.wife_id) : Person.find(current_marriage.husband_id)
     end
   end
 
   def marry spouse
+    
   end
 
-  def divorce spouse
+  def end_marriage end_date
+    if self.married?
+      self.current_marriage.update(end_date: end_date)
+    end
+  end
+
+  def divorce spouse, end_date
+    if current_spouse == spouse
+      self.end_marriage(end_date)
+    end
   end
 
   def die dod
     self.date_of_death = dod
-    if self.married?
-      self.current_marriage.first.update(end_date: dod)
-    end
+    self.end_marriage(dod)
   end
 end

@@ -114,10 +114,10 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "can create former spouses through #divorce" do
-    @person.marry(@spouse)
+    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01")
     assert_equal @person.current_spouse, @spouse
     assert_equal @spouse.current_spouse, @person
-    @person.divorce(@spouse)
+    @person.divorce(@spouse, "2030-02-01")
     assert_not @person.married?
     assert_not @spouse.married?
     assert @person.wives.all?(Person.find(@spouse.id))
