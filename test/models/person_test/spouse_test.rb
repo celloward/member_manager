@@ -9,15 +9,50 @@ class PersonTest < ActiveSupport::TestCase
     @secondspouse.save
   end
 
-  test "can be married" do
+  test "#current_spouse finds opposite spouse with no end date" do
+    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01")
+    assert_equal @person.current_spouse, @spouse
+    assert_equal @spouse.current_spouse, @person
+  end
+
+  test "#current_spouse returns nil if all spouses have end dates" do
+    assert_not @person.current_spouse
+    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01", end_date: "2029-01-01")
+    assert_not @person.current_spouse
+    Marriage.create(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2020-01-01")
+    assert_equal @person.current_spouse, @secondspouse
+  end
+
+  test "#married? returns true if there is a current spouse" do
+    assert_not @spouse.married?
+    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01")
+    assert @spouse.married?
+    m1 = Marriage.find_by(wife_id: @spouse.id)
+    m1.end_date = "2029-01-01"
+    m1.save
+    assert_not @spouse.married?
+    assert_not @person.married?
+  end
+
+  test "#marry creates an active marriage between two people" do
+    marriage1 = Marriage.find_by(husband_id: @person.id)
+    assert_not marriage1
     @person.marry(@spouse)
-    assert_equal @person.married?, true
-    assert_equal @person.wives.current, @spouse
-    assert_equal @spouse.husbands.current, @person
+    assert marriage1
+    marriage1.end_date = "2030-02-12"
+    @secondspouse.marry(@person)
+    assert Marriage.find_by(wife_id: secondspouse.id)
+  end
+
+  test "can be married" do
+    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-02-01")
+    assert @person.married?
+    assert_equal @person.current_spouse, @spouse
+    assert_equal @spouse.current_spouse, @person
   end
 
   test "can be unmarried" do
-    assert_equal @person.married?, false
+    assert_not @person.married?
     assert @person.valid?
   end
 
@@ -37,54 +72,55 @@ class PersonTest < ActiveSupport::TestCase
     assert_raise { @spouse.husbands << @person }
     @spouse.die
     assert_equal @person.wives, @spouse
-    assert_equal @person.wives.current, nil
+    assert_not @person.current_sposue
     assert_equal @spouse.husbands, @person
-    assert_equal @spouse.husbands.current, nil
+    assert_not @spouse.current_spouse
     @person << @secondspouse
-    assert_equal @person.wives.current, nil
+    assert_not @person.wives.current
     @person.marry(@secondspouse)
     assert @person.valid?
-    assert_equal @person.wives.current, @secondspouse
+    assert_equal @person.current_spouse, @secondspouse
     assert_equal @spouse.husbands, @person
-    assert_equal @secondspouse.husbands.current, @person
+    assert_equal @secondspouse.current_spouse, @person
   end
 
   test "cannot have more than one current spouse" do
-    @person.marry(@spouse)
-    assert_raise { @person.marry(@secondspouse) }
+    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01")
+    m2 = Marriage.new(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2020-02-01")
+    assert_not m2.valid?
     @secondspouse.gender = "male"
-    assert_raise { @spouse.marry(@secondspouse) }
+    Marriage.new(husband_id: @secondspouse.id, wife_id: @spouse)
     assert_equal @person.wives, @spouse
     assert_eqaul @spouse.husbands, @person
   end
 
   test "can have former spouse and current spouse" do
-    @person.wives << @spouse
-    @person.marry(@secondspouse)
+    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01", end_date: "2027-02-01")
+    Marriage.create(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2030-02-01")
     assert @person.valid?
-    assert_equal @person.wives.current, @secondspouse
-    assert_eqaul @person.wives.count, 2
-    assert_equal @spouse.husbands.current, @person
+    assert_equal @person.current_spouse, @secondspouse
+    assert_equal @person.wives.count, 2
+    assert_equal @secondspouse.current_spouse, @person
     assert_equal @spouse.husbands.count, 1
     assert_equal @secondspouse.husbands.count, 1
   end
 
-  test "can have former spouse thorugh death" do
+  test "can have former spouse through #die" do
     @person.marry(@secondspouse)
-    @secondspouse.die
-    assert_equal @person.married?, false
-    assert_equal @seconspouse.married?, false
+    @secondspouse.die("2020-13-12")
+    assert_not @person.married?
+    assert_not @seconspouse.married?
     assert_equal @person.wives, @secondspouse
     assert_equal @secondspouse.husbands, @person
   end
 
-  test "can create former spouses through divorce" do
+  test "can create former spouses through #divorce" do
     @person.marry(@spouse)
-    assert_equal @person.wives.current, @spouse
-    assert_equal @spouse.husbands.current, @person
+    assert_equal @person.current_spouse, @spouse
+    assert_equal @spouse.current_spouse, @person
     @person.divorce(@spouse)
-    assert_equal @person.married?, false
-    assert_eqaul @spouse.married?, false
+    assert_not @person.married?
+    assert_not @spouse.married?
     assert_equal @person.wives, @spouse
     assert_equal @spouse.husbands, @person
   end
