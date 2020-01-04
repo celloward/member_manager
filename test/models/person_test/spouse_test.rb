@@ -6,6 +6,7 @@ class PersonTest < ActiveSupport::TestCase
     @person.save
     @spouse.save
     @secondspouse = Person.create(first_name: "Second", last_name: "Person", sex: "female")
+    @thirdspouse = Person.create(first_name: "Other", last_name: "Somebody", sex: "male")
   end
 
   test "#current_spouse finds opposite spouse with no end date" do
@@ -36,7 +37,7 @@ class PersonTest < ActiveSupport::TestCase
   test "#marry creates an active marriage between two people" do
     marriage1 = Marriage.find_by(husband_id: @person.id)
     assert_not marriage1
-    @person.marry(@spouse)
+    @person.marry(@spouse, "2020-01-01")
     assert marriage1
     marriage1.end_date = "2030-02-12"
     @secondspouse.marry(@person)
@@ -46,8 +47,7 @@ class PersonTest < ActiveSupport::TestCase
   test "can be married" do
     Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-02-01")
     assert @person.married?
-    assert_equal @person.current_spouse, @spouse
-    assert_equal @spouse.current_spouse, @person
+    assert @person.valid?
   end
 
   test "can be unmarried" do
@@ -55,42 +55,15 @@ class PersonTest < ActiveSupport::TestCase
     assert @person.valid?
   end
 
-  test "cannot have self as spouse" do
-    assert_raise { @person.wives << @person }
-    assert_raise { @person.husbands << @person }
-  end
-
-  test "cannot have child as spouse" do
-    @person.children << @child
-    assert_raise { @person.wives << @person.child }
-  end
-
-  test "cannot have duplicate current marriages to same person" do
-    @person.marry(@spouse)
-    assert_raise { @person.wives << @spouse }
-    assert_raise { @spouse.husbands << @person }
-    @spouse.die
-    assert_equal @person.wives, @spouse
-    assert_not @person.current_sposue
-    assert_equal @spouse.husbands, @person
-    assert_not @spouse.current_spouse
-    @person << @secondspouse
-    assert_not @person.wives.current
-    @person.marry(@secondspouse)
-    assert @person.valid?
-    assert_equal @person.current_spouse, @secondspouse
-    assert_equal @spouse.husbands, @person
-    assert_equal @secondspouse.current_spouse, @person
-  end
-
-  test "cannot have more than one current spouse" do
-    Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01")
-    m2 = Marriage.new(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2020-02-01")
-    assert_not m2.valid?
-    @secondspouse.sex = "male"
-    Marriage.new(husband_id: @secondspouse.id, wife_id: @spouse)
-    assert_equal @person.wives, @spouse
-    assert_eqaul @spouse.husbands, @person
+  test "cannot #marry when either has current spouse" do
+    @person.marry(@spouse, "2020-01-01")
+    @secondspouse.marry(@thirdspouse, "2020-01-02")
+    assert_raise @person.marry(@spouse, "2030-01-01")
+    assert_raise @person.marry(@secondspouse, "2030-01-01")
+    @person.divorce(@spouse, "2025-01-01")
+    assert_raise @person.marry(@secondspouse, "2030-01-01")
+    @secondspouse.divorce(@thirdspouse, "2025-01-01")
+    assert @person.marry(@secondspouse, "2030-01-01")
   end
 
   test "can have former spouse and current spouse" do

@@ -16,8 +16,9 @@ class MarriageTest < ActiveSupport::TestCase
     assert_not @m2.valid?
     @m1.wife_id = 10
     assert_not @m1.valid?
-    @m2 = Marriage.new(husband_id: @thirdspouse.id, wife_id: @secondspouse.id, marriage_date: "2020-01-01")
-    assert @m2.valid?
+    @fourthspouse = Person.create(id: 10, first_name: "Outa", last_name: "Leftfield", sex: "female")
+    @m1 = Marriage.new(husband_id: @person.id, wife_id: @fourthspouse.id, marriage_date: "2020-01-01")
+    assert @m1.valid?
   end
 
   test "validates husbands are male and wives are female" do
