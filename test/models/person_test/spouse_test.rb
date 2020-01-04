@@ -5,7 +5,7 @@ class PersonTest < ActiveSupport::TestCase
   setup do
     @person.save
     @spouse.save
-    @secondspouse = Person.create(first_name: "Second", last_name: "Person", gender: "female")
+    @secondspouse = Person.create(first_name: "Second", last_name: "Person", sex: "female")
   end
 
   test "#current_spouse finds opposite spouse with no end date" do
@@ -87,7 +87,7 @@ class PersonTest < ActiveSupport::TestCase
     Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01")
     m2 = Marriage.new(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2020-02-01")
     assert_not m2.valid?
-    @secondspouse.gender = "male"
+    @secondspouse.sex = "male"
     Marriage.new(husband_id: @secondspouse.id, wife_id: @spouse)
     assert_equal @person.wives, @spouse
     assert_eqaul @spouse.husbands, @person

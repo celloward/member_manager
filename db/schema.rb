@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(version: 2019_12_20_013257) do
     t.integer "parent_id"
     t.boolean "member", default: false, null: false
     t.string "date_of_death"
-    t.string "gender"
+    t.string "sex"
     t.index ["parent_id"], name: "index_people_on_parent_id"
   end
 

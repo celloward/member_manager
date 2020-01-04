@@ -3,7 +3,7 @@ class Person < ApplicationRecord
   
   #Validations
   validates :first_name, :last_name, presence: true, length: { maximum: 30 }
-  validates :gender, presence: true, format: { with: /\Amale|female\z/ }
+  validates :sex, presence: true, format: { with: /\Amale|female\z/ }
   VALID_EMAIL_REGEX = /[\w+\-.](?<!\.)+@[a-z\d\-.]+(?<!\.)\.[a-z]+/i
   validates :email, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }, unless: Proc.new { |person| person.email.nil? }
   VALID_PHONE_REGEX = /\A\(?\d{3}[\)\-\.\\]?\d{3}[\-\.\\]?\d{4}\z/
@@ -41,7 +41,7 @@ class Person < ApplicationRecord
     end
   end
 
-  def marry spouse
+  def marry spouse, marriage_date
     
   end
 
@@ -51,14 +51,18 @@ class Person < ApplicationRecord
     end
   end
 
-  def divorce spouse, end_date
+  def divorce spouse, divorce_date
     if current_spouse == spouse
-      self.end_marriage(end_date)
+      self.end_marriage(divorce_date)
     end
   end
 
   def die dod
     self.date_of_death = dod
     self.end_marriage(dod)
+  end
+
+  def living?
+    self.date_of_death.nil?
   end
 end

@@ -3,9 +3,9 @@ require 'test_helper'
 class PersonTest < ActiveSupport::TestCase
   setup do
     Rails.application.load_seed
-    @person = Person.new(first_name: "Example", last_name: "Person", gender: "male")
-    @child = Person.new(first_name: "Junior", last_name: "Person", gender: "female")
-    @spouse = Person.new(first_name: "Spouse", last_name: "Person", gender: "female")
+    @person = Person.new(first_name: "Example", last_name: "Person", sex: "male")
+    @child = Person.new(first_name: "Junior", last_name: "Person", sex: "female")
+    @spouse = Person.new(first_name: "Spouse", last_name: "Person", sex: "female")
   end
 
   test "can be a member" do
@@ -14,17 +14,29 @@ class PersonTest < ActiveSupport::TestCase
   test "can be a non-member" do
   end
 
+  test "#living? checks if person is alive" do
+    assert @person.living? 
+    @person.date_of_death = "2020-02-23"
+    @person.save
+    assert_not @person.living?
+  end
+
+  test "#die creates date_of_death" do
+    @person.die("2020-03-13")
+    assert_equal @person.date_of_death, "2020-03-13"
+  end
+
   #Validations
   test "should be valid" do
     assert @person.valid?
   end
 
   test "should have be male or female" do
-    @person.gender = nil
+    @person.sex = nil
     assert_not @person.valid?
-    @person.gender = "woman"
+    @person.sex = "woman"
     assert_not @person.valid?
-    @person.gender = "male"
+    @person.sex = "male"
     assert @person.valid?
   end
 
