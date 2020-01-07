@@ -8,9 +8,9 @@ class Person < ApplicationRecord
   validates :email, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }, allow_nil: true
   VALID_PHONE_REGEX = /\A\(?\d{3}[\)\-\.\\]?\d{3}[\-\.\\]?\d{4}\z/
   validates :phone, format: { with: VALID_PHONE_REGEX }, allow_nil: true
-  validates_with StateValidator, allow_nil: true
-  validates_with ZipValidator, allow_nil: true
-  validates_with DobValidator, allow_nil: true
+  validates_with StateValidator, allow_nil: true, unless: -> (x) { x.nil? }
+  validates_with ZipValidator, allow_nil: true, unless: -> (x) { x.nil? }
+  validates_with DobValidator, unless: -> (x) { x.nil? }
   validates_with ChildValidator, allow_nil: true
 
   #Associations
