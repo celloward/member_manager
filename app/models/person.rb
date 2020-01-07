@@ -5,13 +5,13 @@ class Person < ApplicationRecord
   validates :first_name, :last_name, presence: true, length: { maximum: 30 }
   validates :sex, presence: true, format: { with: /\Amale|female\z/ }
   VALID_EMAIL_REGEX = /[\w+\-.](?<!\.)+@[a-z\d\-.]+(?<!\.)\.[a-z]+/i
-  validates :email, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }, allow_nil: true
+  validates :email, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }, unless: Proc.new { |person| person.email.nil? }
   VALID_PHONE_REGEX = /\A\(?\d{3}[\)\-\.\\]?\d{3}[\-\.\\]?\d{4}\z/
-  validates :phone, format: { with: VALID_PHONE_REGEX }, allow_nil: true
-  validates_with StateValidator, allow_nil: true, unless: -> (x) { x.nil? }
-  validates_with ZipValidator, allow_nil: true, unless: -> (x) { x.nil? }
-  validates_with DobValidator, unless: -> (x) { x.nil? }
-  validates_with ChildValidator, allow_nil: true
+  validates :phone, format: { with: VALID_PHONE_REGEX }, unless: Proc.new { |person| person.phone.nil? }
+  validates_with StateValidator, unless: Proc.new { |person| person.state.nil? }
+  validates_with ZipValidator, unless: Proc.new { |person| person.zipcode.nil? }, :field => :state
+  validates_with DobValidator, unless: Proc.new { |person| person.dob.nil? }
+  validates_with ChildValidator, unless: Proc.new { |person| person.children.nil? }
 
   #Associations
   has_many :children, class_name: "Person", foreign_key: :parent_id

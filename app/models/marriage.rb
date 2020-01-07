@@ -10,6 +10,8 @@ class Marriage < ApplicationRecord
   validates :husband, :wife, presence: true
   # validates_with MarriageValidator
 
+  scope :all_marriages, ->(id) { where(husband_id: id) | where(wife_id: id) } 
+  scope :current_marriage, ->(id) { all_marriages(id).where(end_date: nil) }
 
   belongs_to :husband, class_name: "Person"
   belongs_to :wife, class_name: "Person"
