@@ -7,7 +7,7 @@ class Marriage < ApplicationRecord
   #Marriage cannot be with own child
 
 #Validations
-  # validates :husband, :wife
+  validates :husband, :wife, presence: true
   # validates_with MarriageValidator
 
 
