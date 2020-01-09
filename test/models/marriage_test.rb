@@ -21,35 +21,33 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m1.valid?
   end
 
-  # test "validates husbands are male and wives are female" do
-  #   @m1.wife_id = @thirdspouse.id
-  #   assert_not @m1.valid?
-  #   @m1.husband_id = @secondspouse.id
-  #   assert_not @m1.valid?
-  #   @m1.wife_id = @spouse.id
-  #   assert_not @m1.valid?
-  #   @m1.husband_id = @thirdspouse.id
-  #   assert @m1.valid?
-  # end
+  test "validates husbands are male and wives are female" do
+    @m1.wife_id = @thirdspouse.id
+    assert @m1.invalid?
+    @m1.husband_id = @secondspouse.id
+    assert @m1.invalid?
+    @m1.wife_id = @spouse.id
+    assert @m1.invalid?
+    @m1.husband_id = @thirdspouse.id
+    assert @m1.valid?
+  end
 
-  # test "validates self cannot be spouse" do
-  #   @m1.wife_id = @person.id
-  #   assert_not @m1.valid?
-  # end
+  test "validates self cannot be spouse" do
+    @m1.wife_id = @person.id
+    assert @m1.invalid?
+  end
 
-  # test "cannot have child as spouse" do
-  #   assert @m1.valid?
-  #   @person.children << @spouse
-  #   @person.save
-  #   assert_not @m1.valid?
-  # end
+  test "cannot have child as spouse" do
+    assert @m1.valid?
+    @person.children << @spouse
+    assert @m1.invalid?
+  end
 
   test "cannot have more than one current marriage" do
     @m1.save
     @m2 = Marriage.new(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2022-01-01")
     assert_not @m2.valid?
     @m1.update(end_date: "2021-01-01")
-    @m1.save
     assert @m2.valid?
   end
 
