@@ -55,16 +55,16 @@ class PersonTest < ActiveSupport::TestCase
     assert @person.valid?
   end
 
-  # test "cannot #marry when either has current spouse" do
-  #   @person.marry(@spouse, "2020-01-01")
-  #   @secondspouse.marry(@thirdspouse, "2020-01-02")
-  #   assert_raise @person.marry(@spouse, "2030-01-01")
-  #   assert_raise @person.marry(@secondspouse, "2030-01-01")
-  #   @person.divorce(@spouse, "2025-01-01")
-  #   assert_raise @person.marry(@secondspouse, "2030-01-01")
-  #   @secondspouse.divorce(@thirdspouse, "2025-01-01")
-  #   assert @person.marry(@secondspouse, "2030-01-01")
-  # end
+  test "cannot #marry when either has current spouse" do
+    @person.marry(@spouse, "2020-01-01")
+    @secondspouse.marry(@thirdspouse, "2020-01-02")
+    assert_raise @person.marry(@spouse, "2030-01-01")
+    assert_raise @person.marry(@secondspouse, "2030-01-01")
+    @person.divorce(@spouse, "2025-01-01")
+    assert_raise @person.marry(@secondspouse, "2030-01-01")
+    @secondspouse.divorce(@thirdspouse, "2025-01-01")
+    assert @person.marry(@secondspouse, "2030-01-01")
+  end
 
   test "can have former spouse and current spouse" do
     Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01", end_date: "2027-02-01")

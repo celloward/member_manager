@@ -13,3 +13,12 @@ Person table
 * "living" becomes "date_of_death", default: null, null: true
 * remove "spouse_id" reference
 * remove "former_spouse_id" reference
+
+
+Cleanup
+* Person validation conditions
+* DB calls in validations?
+
+BUGS
+* Child cannot have more than one parent
+* 
