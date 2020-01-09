@@ -19,7 +19,7 @@ class PersonTest < ActiveSupport::TestCase
     assert_not @person.current_spouse
     Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-01-01", end_date: "2029-01-01")
     assert_not @person.current_spouse
-    Marriage.create(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2020-01-01")
+    Marriage.create(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2030-01-01")
     assert_equal @person.current_spouse, @secondspouse
   end
 

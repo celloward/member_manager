@@ -51,23 +51,23 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m2.valid?
   end
 
-  # test "cannot have marriage date inside other marriage dates for same person" do
-  #   @m1.end_date = "2030-01-01"
-  #   @m1.save
-  #   @m2 = Marriage.new(husband_id: @thirdspouse.id, wife_id: @spouse.id, marriage_date: "2025-01-01")
-  #   assert_not @m2.valid?
-  #   @m2.marriage_date = "2030-01-02"
-  #   assert @m2.valid?
-  # end
+  test "cannot have marriage date inside other marriage dates for same person" do
+    @m1.end_date = "2030-01-01"
+    @m1.save
+    @m2 = Marriage.new(husband_id: @thirdspouse.id, wife_id: @spouse.id, marriage_date: "2025-01-01")
+    assert @m2.invalid?
+    @m2.marriage_date = "2030-01-02"
+    assert @m2.valid?
+  end
 
-  # test "can marry same person outside of original date range" do
-  #   @m1.end_date = "2030-01-01"
-  #   @m1.save
-  #   @m2 = Marriage.new(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2029-01-02")
-  #   assert_not @m2.valid?
-  #   @m2.marriage_date = "2032-01-01"
-  #   assert @m2.valid?
-  # end
+  test "can marry same person outside of original date range" do
+    @m1.end_date = "2030-01-01"
+    @m1.save
+    @m2 = Marriage.new(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2029-01-02")
+    assert @m2.invalid?
+    @m2.marriage_date = "2032-01-01"
+    assert @m2.valid?
+  end
 
     
 end

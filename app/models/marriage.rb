@@ -11,9 +11,10 @@ class Marriage < ApplicationRecord
   validates_with RelationValidator
   validates_with AvailableValidator, on: :create
   validates_with SexValidator
-  #validates_with CollisionValidator
+  validates_with CollisionValidator
 
   scope :other_marriages, ->(record) { where(husband_id: record.husband_id).or(Marriage.where(wife_id: record.wife_id)) } 
+  scope :former, -> { where("end_date IS NOT NULL") }
   scope :current, -> { where(end_date: nil) }
   scope :individual_marriages, ->(id) { where(husband_id: id).or(Marriage.where(wife_id: id)) }
 
