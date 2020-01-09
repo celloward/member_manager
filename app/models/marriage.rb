@@ -8,10 +8,13 @@ class Marriage < ApplicationRecord
 
 #Validations
   validates :husband, :wife, presence: true
-  # validates_with MarriageValidator
+  validates_with AvailableValidator, on: :create
+  #validates_with SexValidator
+  #validates_with CollisionValidator
 
-  scope :all_marriages, ->(id) { where(husband_id: id) | where(wife_id: id) } 
-  scope :current_marriage, ->(id) { all_marriages(id).where(end_date: nil) }
+  scope :other_marriages, ->(record) { where(husband_id: record.husband_id).or(Marriage.where(wife_id: record.wife_id)) } 
+  scope :current, -> { where(end_date: nil) }
+  scope :individual_marriages, ->(id) { where(husband_id: id).or(Marriage.where(wife_id: id))}
 
   belongs_to :husband, class_name: "Person"
   belongs_to :wife, class_name: "Person"

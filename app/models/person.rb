@@ -31,12 +31,13 @@ class Person < ApplicationRecord
   end
 
   def current_marriage
-    Marriage.where(husband_id: self.id).or(Marriage.where(wife_id: self.id)).where(end_date: nil).first
+    Marriage.individual_marriages(self.id).current.first
   end
 
   def current_spouse
-    if !self.current_marriage.nil?
-      current_marriage.husband_id == self.id ? Person.find(current_marriage.wife_id) : Person.find(current_marriage.husband_id)
+    cm = current_marriage
+    unless cm.nil?
+      cm.husband_id == self.id ? Person.find(cm.wife_id) : Person.find(cm.husband_id)
     end
   end
 
