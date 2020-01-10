@@ -3,10 +3,40 @@ require 'test_helper'
 class PersonTest < ActiveSupport::TestCase
   setup do
     Rails.application.load_seed
-    @person = Person.new(first_name: "Example", last_name: "Person")
+    @person = Person.new(first_name: "Example", last_name: "Person", sex: "male")
+    @child = Person.new(first_name: "Junior", last_name: "Person", sex: "female")
+    @spouse = Person.new(first_name: "Spouse", last_name: "Person", sex: "female")
   end
 
+  test "can be a member" do
+  end
+
+  test "can be a non-member" do
+  end
+
+  test "#living? checks if person is alive" do
+    assert @person.living? 
+    @person.date_of_death = "2020-02-23"
+    @person.save
+    assert_not @person.living?
+  end
+
+  test "#die creates date_of_death" do
+    @person.die("2020-03-13")
+    assert_equal @person.date_of_death, "2020-03-13"
+  end
+
+  #Validations
   test "should be valid" do
+    assert @person.valid?
+  end
+
+  test "should have be male or female" do
+    @person.sex = nil
+    assert_not @person.valid?
+    @person.sex = "woman"
+    assert_not @person.valid?
+    @person.sex = "male"
     assert @person.valid?
   end
 
@@ -46,7 +76,8 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "zipcode validation should reject invalid entries" do
-    invalid_zipcodes = %w[240189 213 15ds6 00000]
+    @person.state = "VA"
+    invalid_zipcodes = %w[240189 213 15ds6 00000 60660]
     invalid_zipcodes.each do |invalid_zipcode|
       @person.zipcode = invalid_zipcode
       assert_not @person.valid?, "#{invalid_zipcode} should be invalid"
@@ -54,6 +85,7 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "zipcode validation should accept valid entries" do
+    @person.state = "VA"
     @person.zipcode = "24018"
     assert @person.valid?
   end
@@ -75,7 +107,7 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   test "dob validation rejects invalid entries" do
-    invalid_dob = %w[1-2-2000 01022000 01-02-99]
+    invalid_dob = %w[1-2-2000 01022000 01-02-99 30-11-2000 11-32-2000 11-30-3000 11-30-1850]
     invalid_dob.each do |dob|
       @person.dob = dob
       assert_not @person.valid?, "#{dob} should be invalid"
@@ -90,6 +122,25 @@ class PersonTest < ActiveSupport::TestCase
     end
   end
 
+  #Associations with Self(Children)
+  test "can have children" do
+    @person.save
+    @child.save
+    @person.children << @child
+    assert @person.children.first == @child
+  end
+
+  test "can have no children" do
+    assert @person.children.blank?
+  end
+
+  test "cannot have self as child" do
+    @person.save
+    @person.children << @person
+    assert_not @person.valid?
+  end
+
+  #Associations with Ministry
   # test "people can lead a ministry" do
   #   worship = Ministry.create(name: "Worship")
   #   worship.leader = Person.find_by(first_name: "c")
