@@ -6,12 +6,12 @@ class Person < ApplicationRecord
   validates :sex, presence: true, format: { with: /\Amale|female\z/ }
   VALID_EMAIL_REGEX = /[\w+\-.](?<!\.)+@[a-z\d\-.]+(?<!\.)\.[a-z]+/i
   VALID_PHONE_REGEX = /\A\(?\d{3}[\)\-\.\\]?\d{3}[\-\.\\]?\d{4}\z/
-  validates :email, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }, unless: Proc.new { |person| person.email.nil? }
-  validates :phone, format: { with: VALID_PHONE_REGEX }, unless: Proc.new { |person| person.phone.nil? }
-  validates_with StateValidator, unless: Proc.new { |person| person.state.nil? }
-  validates_with ZipValidator, unless: Proc.new { |person| person.zipcode.nil? }, :field => :state
-  validates_with DobValidator, unless: Proc.new { |person| person.dob.nil? }
-  validates_with ChildValidator, unless: Proc.new { |person| person.children.nil? }
+  validates :email, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }, unless: -> { email.nil? }
+  validates :phone, format: { with: VALID_PHONE_REGEX }, unless: -> { phone.nil? }
+  validates_with StateValidator, unless: -> { state.nil? }
+  validates_with ZipValidator, unless: -> { zipcode.nil? }
+  validates_with DobValidator, unless: -> { dob.nil? }
+  validates_with ChildValidator, unless: -> { children.nil? }
 
   #Associations
   has_many :children, class_name: "Person", foreign_key: :parent_id
@@ -49,15 +49,11 @@ class Person < ApplicationRecord
   end
 
   def end_marriage end_date
-    if self.married?
-      self.current_marriage.update(end_date: end_date)
-    end
+    self.current_marriage.update(end_date: end_date) if self.married?
   end
 
   def divorce spouse, divorce_date
-    if current_spouse == spouse
-      self.end_marriage(divorce_date)
-    end
+    self.end_marriage(divorce_date) if current_spouse == spouse
   end
 
   def die dod
