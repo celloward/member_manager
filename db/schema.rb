@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_20_013257) do
+ActiveRecord::Schema.define(version: 2020_01_10_193012) do
 
   create_table "leaderships", force: :cascade do |t|
     t.integer "leader_id"
@@ -54,6 +54,8 @@ ActiveRecord::Schema.define(version: 2019_12_20_013257) do
     t.boolean "member", default: false, null: false
     t.string "date_of_death"
     t.string "sex"
+    t.integer "child_id"
+    t.index ["child_id"], name: "index_people_on_child_id"
     t.index ["parent_id"], name: "index_people_on_parent_id"
   end
 

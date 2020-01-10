@@ -122,24 +122,6 @@ class PersonTest < ActiveSupport::TestCase
     end
   end
 
-  #Associations with Self(Children)
-  test "can have children" do
-    @person.save
-    @child.save
-    @person.children << @child
-    assert @person.children.first == @child
-  end
-
-  test "can have no children" do
-    assert @person.children.blank?
-  end
-
-  test "cannot have self as child" do
-    @person.save
-    @person.children << @person
-    assert_not @person.valid?
-  end
-
   #Associations with Ministry
   # test "people can lead a ministry" do
   #   worship = Ministry.create(name: "Worship")
