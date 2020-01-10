@@ -34,15 +34,14 @@ class PersonTest < ActiveSupport::TestCase
     assert_not @person.married?
   end
 
-  # test "#marry creates an active marriage between two people" do
-  #   marriage1 = Marriage.find_by(husband_id: @person.id)
-  #   assert_not marriage1
-  #   @person.marry(@spouse, "2020-01-01")
-  #   assert marriage1
-  #   marriage1.end_date = "2030-02-12"
-  #   @secondspouse.marry(@person)
-  #   assert Marriage.find_by(wife_id: secondspouse.id)
-  # end
+  test "#marry creates an active marriage between two people" do
+    assert_not Marriage.find_by(husband_id: @person.id)
+    @person.marry(@spouse, "2020-01-01")
+    assert m1 = Marriage.find_by(husband_id: @person.id)
+    m1.update(end_date: "2030-02-12")
+    @secondspouse.marry(@person, "2031-01-02")
+    assert Marriage.find_by(wife_id: @secondspouse.id)
+  end
 
   test "can be married" do
     Marriage.create(husband_id: @person.id, wife_id: @spouse.id, marriage_date: "2020-02-01")
@@ -58,10 +57,10 @@ class PersonTest < ActiveSupport::TestCase
   test "cannot #marry when either has current spouse" do
     @person.marry(@spouse, "2020-01-01")
     @secondspouse.marry(@thirdspouse, "2020-01-02")
-    assert_raise @person.marry(@spouse, "2030-01-01")
-    assert_raise @person.marry(@secondspouse, "2030-01-01")
+    assert_raises { @person.marry(@spouse, "2030-01-01") }
+    assert_raises { @person.marry(@secondspouse, "2030-01-01") }
     @person.divorce(@spouse, "2025-01-01")
-    assert_raise @person.marry(@secondspouse, "2030-01-01")
+    assert_raises { @person.marry(@secondspouse, "2030-01-01") }
     @secondspouse.divorce(@thirdspouse, "2025-01-01")
     assert @person.marry(@secondspouse, "2030-01-01")
   end

@@ -47,7 +47,7 @@ class Person < ApplicationRecord
       wife = spouse 
     else
       husband = spouse
-      wife = spouse
+      wife = self
     end
     marriage = Marriage.new(husband_id: husband.id, wife_id: wife.id, marriage_date: marriage_date)
     if marriage.valid?
