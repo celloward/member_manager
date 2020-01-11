@@ -1,4 +1,8 @@
 Features
+* Add validation and test for presence of Marriage.marriage_date
+* Make sure Marriage.end_date can't be changed to an illegal time for other marriages
+* Find where to move validation folders
+* Move leadership info into Ministry and destroy Leaderships model
 
 Cleanup
 * DB calls in validations?
