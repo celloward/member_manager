@@ -8,6 +8,7 @@ class Marriage < ApplicationRecord
 
 #Validations
   validates :husband, :wife, presence: true
+  validates :marriage_date, presence: true
   validates_with RelationValidator
   validates_with AvailableValidator, on: :create
   validates_with SexValidator

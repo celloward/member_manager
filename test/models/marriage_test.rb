@@ -21,6 +21,12 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m1.valid?
   end
 
+  test "validates presence of marriage_date" do
+    assert @m1.valid?
+    @m1.marriage_date = nil
+    assert @m1.invalid?
+  end
+
   test "validates husbands are male and wives are female" do
     @m1.wife_id = @thirdspouse.id
     assert @m1.invalid?
