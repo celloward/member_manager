@@ -36,7 +36,7 @@ class PersonTest < ActiveSupport::TestCase
     @person.children << @child2
     @spouse.children << @child
     assert_equal @person.children.count, 1
-    assert_equal @person.children.count, 1
+    assert_equal @spouse.children.count, 1
     @person.marry(@spouse, "2020-02-01")
     assert_equal @spouse.children.count, 2
     assert_equal @person.children.count, 2

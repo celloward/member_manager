@@ -16,8 +16,7 @@ class PersonTest < ActiveSupport::TestCase
 
   test "#living? checks if person is alive" do
     assert @person.living? 
-    @person.date_of_death = "2020-02-23"
-    @person.save
+    @person.update(date_of_death: "2020-02-23")
     assert_not @person.living?
   end
 
@@ -31,26 +30,26 @@ class PersonTest < ActiveSupport::TestCase
     assert @person.valid?
   end
 
-  test "should have be male or female" do
+  test "should be 'male' or 'female'" do
     @person.sex = nil
-    assert_not @person.valid?
+    assert @person.invalid?
     @person.sex = "woman"
-    assert_not @person.valid?
-    @person.sex = "male"
+    assert @person.invalid?
+    @person.sex = "female"
     assert @person.valid?
   end
 
   test "first and last name should be present" do
     @person.first_name = "   "
     @person.last_name = "  "
-    assert_not @person.valid?
+    assert @person.invalid?
   end
 
   test "state validation should reject invalid entries" do
     invalid_state = %w[ILA ZD md]
     invalid_state.each do |invalid_state|
       @person.state = invalid_state
-      assert_not @person.valid?, "#{invalid_state} should be valid"
+      assert @person.invalid?, "#{invalid_state} should be valid"
     end
   end
 

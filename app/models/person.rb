@@ -29,7 +29,7 @@ class Person < ApplicationRecord
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry
 
-  
+  #Methods
   def married?
     !self.current_spouse.nil?
   end
@@ -46,15 +46,11 @@ class Person < ApplicationRecord
   end
 
   def marry spouse, marriage_date
-    husband, wife = self, spouse
-    husband, wife = spouse, self if self.sex == "female"
+    self.sex == "female" ? (husband, wife = spouse, self) : (husband, wife = self, spouse)
     marriage = Marriage.new(husband_id: husband.id, wife_id: wife.id, marriage_date: marriage_date)
-    joint_children = husband.children
-    joint_children << wife.children
-    joint_children.each do |child| 
-      husband.children << child unless husband.children.include?(child)
-      wife.children << child unless wife.children.include?(child)
-    end
+    joint_children = husband.children + wife.children
+    husband.children = joint_children.uniq
+    wife.children = joint_children.uniq
     marriage.valid? ? marriage.save : marriage.errors.full_messages.each { |error| raise StandardError.new "#{error}" }
   end
 
