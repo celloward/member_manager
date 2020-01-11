@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_20_013257) do
+ActiveRecord::Schema.define(version: 2020_01_10_215618) do
 
   create_table "leaderships", force: :cascade do |t|
     t.integer "leader_id"
@@ -38,6 +38,16 @@ ActiveRecord::Schema.define(version: 2019_12_20_013257) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "parentings", force: :cascade do |t|
+    t.integer "child_id"
+    t.integer "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_id", "parent_id"], name: "by_child_and_parent", unique: true
+    t.index ["child_id"], name: "index_parentings_on_child_id"
+    t.index ["parent_id"], name: "index_parentings_on_parent_id"
+  end
+
   create_table "people", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -50,11 +60,9 @@ ActiveRecord::Schema.define(version: 2019_12_20_013257) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "state"
-    t.integer "parent_id"
     t.boolean "member", default: false, null: false
     t.string "date_of_death"
     t.string "sex"
-    t.index ["parent_id"], name: "index_people_on_parent_id"
   end
 
   create_table "states", force: :cascade do |t|

@@ -14,9 +14,12 @@ class Person < ApplicationRecord
   validates_with ChildValidator, unless: -> { children.nil? }
 
   #Associations
-  has_many :children, class_name: "Person", foreign_key: :parent_id
-  belongs_to :parent, class_name: "Person", optional: true
-  
+  has_many :parental_relations, foreign_key: :parent_id, class_name: "Parenting", inverse_of: :parent
+  has_many :children, through: :parental_relations, source: :child
+
+  has_many :childings, foreign_key: :child_id, class_name: "Parenting", inverse_of: :child
+  has_many :parents, through: :childings, source: :parent
+
   has_many :husband_marriages, foreign_key: :husband_id, class_name: "Marriage", inverse_of: :husband
   has_many :wives, through: :husband_marriages
 
@@ -26,6 +29,7 @@ class Person < ApplicationRecord
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry
 
+  #Methods
   def married?
     !self.current_spouse.nil?
   end
@@ -42,9 +46,11 @@ class Person < ApplicationRecord
   end
 
   def marry spouse, marriage_date
-    husband, wife = self, spouse
-    husband, wife = spouse, self if self.sex == "female"
+    self.sex == "female" ? (husband, wife = spouse, self) : (husband, wife = self, spouse)
     marriage = Marriage.new(husband_id: husband.id, wife_id: wife.id, marriage_date: marriage_date)
+    joint_children = husband.children + wife.children
+    husband.children = joint_children.uniq
+    wife.children = joint_children.uniq
     marriage.valid? ? marriage.save : marriage.errors.full_messages.each { |error| raise StandardError.new "#{error}" }
   end
 
