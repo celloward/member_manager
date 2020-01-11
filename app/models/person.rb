@@ -14,15 +14,12 @@ class Person < ApplicationRecord
   validates_with ChildValidator, unless: -> { children.nil? }
 
   #Associations
-  has_many :parentings, foreign_key: :parent_id, class_name: "Person", inverse_of: :parent
-  has_many :children, through: :parentings, source: :child, optional: true
+  has_many :parental_relations, foreign_key: :parent_id, class_name: "Parenting", inverse_of: :parent
+  has_many :children, through: :parental_relations, source: :child
 
-  has_many :childings, foreign_key: :child_id, class_name: "Person", inverse_of: :child
-  has_many :parents, through: :childings, source: :parent, optional: true
+  has_many :childings, foreign_key: :child_id, class_name: "Parenting", inverse_of: :child
+  has_many :parents, through: :childings, source: :parent
 
-  belongs_to :parent, class_name: "Person"
-  belongs_to :child, class_name: "Person"
-  
   has_many :husband_marriages, foreign_key: :husband_id, class_name: "Marriage", inverse_of: :husband
   has_many :wives, through: :husband_marriages
 
@@ -31,6 +28,8 @@ class Person < ApplicationRecord
 
   has_many :leaderships, foreign_key: :leader_id
   has_many :led_ministries, through: :leaderships, source: :ministry
+
+  
 
   def married?
     !self.current_spouse.nil?
