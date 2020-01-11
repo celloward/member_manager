@@ -1,11 +1,6 @@
-Features?
-* Add children to spouse when #marry
-* Children can have more than one parent simultaneously
-
+Features
 
 Cleanup
 * DB calls in validations?
 
 BUGS
-* Child cannot have more than one parent
-* 
