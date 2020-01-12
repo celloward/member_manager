@@ -1,6 +1,7 @@
 Features
 * Make sure Marriage.end_date can't be changed to an illegal time for other marriages
 * Move leadership info into Ministry and destroy Leaderships model
+* Validate end_date cannot be before marriage_date
 
 Cleanup
 * DB calls in validations?
