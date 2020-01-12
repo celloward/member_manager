@@ -4,6 +4,7 @@ Features
 * Validate end_date cannot be before marriage_date
 
 Cleanup
-* DB calls in validations?
+* DB calls in validations and #marry
 
 BUGS
+* Caching values and errors that no longer apply from a database level. Need a call back to check.

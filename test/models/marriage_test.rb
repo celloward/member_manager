@@ -27,6 +27,11 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m1.invalid?
   end
 
+  test "validates end date cannot be before marriage_date" do
+    @m1.end_date = "2000-01-01"
+    assert @m1.invalid?
+  end
+
   test "validates husbands are male and wives are female" do
     @m1.wife_id = @thirdspouse.id
     assert @m1.invalid?
