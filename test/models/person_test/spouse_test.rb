@@ -78,7 +78,7 @@ class PersonTest < ActiveSupport::TestCase
 
   test "can have former spouse through #die" do
     Marriage.create(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "2020-01-01")
-    @secondspouse.die("2020-13-12")
+    @secondspouse.die("2020-12-12")
     assert_not @person.married?
     assert_not @secondspouse.married?
     assert @person.wives.all?(Person.find(@secondspouse.id))

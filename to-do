@@ -1,10 +1,7 @@
 Features
-* Make sure Marriage.end_date can't be changed to an illegal time for other marriages
 * Move leadership info into Ministry and destroy Leaderships model
-* Validate end_date cannot be before marriage_date
 
 Cleanup
-* DB calls in validations and #marry
 
 BUGS
-* Caching values and errors that no longer apply from a database level. Need a call back to check.
+* Cannot make spouse database to be child after marriage is saved. Must raise error and refuse to save child and keep marriage safe.

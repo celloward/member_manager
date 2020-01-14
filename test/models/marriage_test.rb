@@ -52,6 +52,11 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m1.valid?
     @person.children << @spouse
     assert @m1.invalid?
+    @person.children = []
+    assert @m1.valid?
+    @m1.save
+    assert_raises { @person.children << @spouse }
+    assert @m1.valid?
   end
 
   test "cannot have more than one current marriage" do
@@ -85,7 +90,6 @@ class MarriageTest < ActiveSupport::TestCase
     @m1.save
     @m2 = Marriage.create(husband_id: @thirdspouse.id, wife_id: @spouse.id, marriage_date: "2026-01-01", end_date: "2030-02-01")
     @m1.update(end_date: "2027-01-01")
-    # debugger
     assert @m1.invalid?
     assert @m2.valid?
     @m1 = Marriage.find(1)

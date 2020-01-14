@@ -5,6 +5,7 @@ module PeopleHelper
   end
 
   def to_date date
+    date = "4000-01-01" if date.nil?
     Date.strptime(date, "%Y-%m-%d")
   end
 end
