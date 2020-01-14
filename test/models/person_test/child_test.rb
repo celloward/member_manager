@@ -32,14 +32,16 @@ class PersonTest < ActiveSupport::TestCase
     assert_equal @child.parents.count, 2
   end
 
-  test "children get inherited through marriage" do
-    @person.children << @child2
-    @spouse.children << @child
-    assert_equal @person.children.count, 1
-    assert_equal @spouse.children.count, 1
-    @person.marry(@spouse, "2020-02-01")
-    assert_equal @spouse.children.count, 2
-    assert_equal @person.children.count, 2
+  test "cannot have parent who is also child" do
+    @person.children << @child
+    assert_raises { @child.children << @parent }
+    assert_equal @person.children, 0
+  end
+
+  test "cannot become child of spouse" do
+    @person.marry(@spouse, "2020-01-01")
+    assert_raises { @person.children << @spouse }
+    assert_equal @person.children, 0
   end
 
   test "cannot have self as child" do
@@ -50,5 +52,15 @@ class PersonTest < ActiveSupport::TestCase
   test "cannot have same child multiple times" do
     @person.children << @child
     assert_raises { @person.children << @child }
+  end
+
+  test "children get inherited through marriage" do
+    @person.children << @child2
+    @spouse.children << @child
+    assert_equal @person.children.count, 1
+    assert_equal @spouse.children.count, 1
+    @person.marry(@spouse, "2020-02-01")
+    assert_equal @spouse.children.count, 2
+    assert_equal @person.children.count, 2
   end
 end
