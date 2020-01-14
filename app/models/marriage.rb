@@ -17,6 +17,6 @@ class Marriage < ApplicationRecord
   belongs_to :wife, class_name: "Person"
 
   def people_exist?
-    !Person.where(id: self.husband_id).empty? && !Person.where(id: self.wife_id).empty?
+    Person.where(id: self.husband_id).or(Person.where(id: self.wife_id)).count == 2
   end
 end
