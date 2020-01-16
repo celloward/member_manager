@@ -21,6 +21,17 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m1.valid?
   end
 
+  test "validates presence of marriage_date" do
+    assert @m1.valid?
+    @m1.marriage_date = nil
+    assert @m1.invalid?
+  end
+
+  test "validates end date cannot be before marriage_date" do
+    @m1.end_date = "2000-01-01"
+    assert @m1.invalid?
+  end
+
   test "validates husbands are male and wives are female" do
     @m1.wife_id = @thirdspouse.id
     assert @m1.invalid?
@@ -41,6 +52,11 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m1.valid?
     @person.children << @spouse
     assert @m1.invalid?
+    @person.children = []
+    assert @m1.valid?
+    @m1.save
+    assert_raises { @person.children << @spouse }
+    assert @m1.valid?
   end
 
   test "cannot have more than one current marriage" do
@@ -69,5 +85,23 @@ class MarriageTest < ActiveSupport::TestCase
     assert @m2.valid?
   end
 
-    
+  test "cannot update marriage dates to collide with other relevant marriages" do
+    @m1.end_date = "2025-01-01"
+    @m1.save
+    @m2 = Marriage.create(husband_id: @thirdspouse.id, wife_id: @spouse.id, marriage_date: "2026-01-01", end_date: "2030-02-01")
+    @m1.update(end_date: "2027-01-01")
+    assert @m1.invalid?
+    assert @m2.valid?
+    @m1 = Marriage.find(1)
+    @m2.update(marriage_date: "2024-01-01")
+    assert @m2.invalid?
+    assert @m1.valid?
+  end
+  
+  test "can add previous marriages even if in current marriage" do
+    @m1.save
+    @m2 = Marriage.new(husband_id: @person.id, wife_id: @secondspouse.id, marriage_date: "1980-01-01", end_date: "1999-01-01")
+    assert @m2.valid?
+    assert @m1.valid?
+  end
 end

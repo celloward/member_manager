@@ -1,6 +1,7 @@
 Features
+* Move leadership info into Ministry and destroy Leaderships model
 
 Cleanup
-* DB calls in validations?
 
 BUGS
+* Cannot make spouse database to be child after marriage is saved. Must raise error and refuse to save child and keep marriage safe.
