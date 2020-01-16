@@ -41,7 +41,7 @@ class PersonTest < ActiveSupport::TestCase
   test "cannot become child of spouse" do
     @person.marry(@spouse, "2020-01-01")
     assert_raises { @person.children << @spouse }
-    assert_equal @person.children, 0
+    assert_empty @person.children
   end
 
   test "cannot have self as child" do
