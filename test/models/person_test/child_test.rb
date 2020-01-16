@@ -34,8 +34,8 @@ class PersonTest < ActiveSupport::TestCase
 
   test "cannot have parent who is also child" do
     @person.children << @child
-    assert_raises { @child.children << @parent }
-    assert_equal @person.children, 0
+    assert_raises { @child.children << @person }
+    assert_equal @child.children.count, 0
   end
 
   test "cannot become child of spouse" do

@@ -3,7 +3,7 @@ class Marriage < ApplicationRecord
 #Validations
   validates :husband, :wife, presence: true
   validates :marriage_date, presence: true
-  validates_with RelationValidator
+  validates_with RelationValidator, strict: true 
   validates_with SexValidator
   validates_with CollisionValidator
 

@@ -15,10 +15,10 @@ class Person < ApplicationRecord
 
   #Associations
   has_many :parental_relations, foreign_key: :parent_id, class_name: "Parenting", inverse_of: :parent
-  has_many :children, through: :parental_relations, source: :child
+  has_many :children, through: :parental_relations, source: :child, validate: true
 
   has_many :childings, foreign_key: :child_id, class_name: "Parenting", inverse_of: :child
-  has_many :parents, through: :childings, source: :parent
+  has_many :parents, through: :childings, source: :parent, validate: true
 
   has_many :husband_marriages, foreign_key: :husband_id, class_name: "Marriage", inverse_of: :husband
   has_many :wives, through: :husband_marriages
