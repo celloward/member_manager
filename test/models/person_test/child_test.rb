@@ -3,6 +3,7 @@ require 'test_helper'
 class PersonTest < ActiveSupport::TestCase
   
   setup do
+    @secondspouse = Person.create(first_name: "Second", last_name: "Person", sex: "female")
     @child = Person.create(first_name: "Junior", last_name: "Person", sex: "female")
     @child2 = Person.create(first_name: "The Second", last_name: "Person", sex: "male")
   end
@@ -62,5 +63,13 @@ class PersonTest < ActiveSupport::TestCase
     @person.marry(@spouse, "2020-02-01")
     assert_equal @spouse.children.count, 2
     assert_equal @person.children.count, 2
+  end
+
+  test "children are not inherited if marriage is invalid" do
+    @person.children << @child
+    @person.marry(@spouse, "2020-01-01")
+    assert Marriage.find_by(husband_id: @person.id).valid?
+    assert_raises { @person.marry(@secondspouse, "2030-01-01") }
+    assert_equal @secondspouse.children.count, 0
   end
 end

@@ -48,11 +48,20 @@ class Person < ApplicationRecord
   def marry spouse, marriage_date
     self.sex == "female" ? (husband, wife = spouse, self) : (husband, wife = self, spouse)
     marriage = Marriage.new(husband_id: husband.id, wife_id: wife.id, marriage_date: marriage_date)
+    if marriage.valid? 
+      marriage.save 
+      share_children(husband, wife)
+    else
+      marriage.errors.full_messages.each { |error| raise StandardError.new "#{error}" }
+    end
+  end
+
+  def share_children husband, wife
     joint_children = husband.children + wife.children
     husband.children = joint_children.uniq
     wife.children = joint_children.uniq
-    marriage.valid? ? marriage.save : marriage.errors.full_messages.each { |error| raise StandardError.new "#{error}" }
   end
+
 
   def end_marriage end_date
     self.current_marriage.update(end_date: end_date) if self.married?
